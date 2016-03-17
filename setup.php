@@ -4,22 +4,22 @@ include('autoload.php');
 
 if (empty($db_user) || empty($db_password))
 {
-  echo "Missing MySQL user credentials. Please specify a username and password inside 'autoload.php' before running the setup.";
-  exit;
+  die("Missing MySQL user credentials. Please specify a username and password inside 'autoload.php' before running the setup.");
 }
 try {
 $setup = new PDO("mysql:host=".$db_host, $db_user, $db_password);
-} catch (PDOException $e) {
-    echo "An error occurred when logging into MySQL - " . $e->getMessage();
-    exit;
+} 
+catch (PDOException $e) {
+    die("An error occurred when logging into MySQL - " . $e->getMessage());
 }
 echo '<pre>';
+
 $query = $setup->prepare("CREATE DATABASE " . DATABASE_NAME);
 
 if ($query->execute()){
 echo "Created database '" . DATABASE_NAME ."' <font color='green'>successfully</font><br>";
 } else {
-  echo "<font color='red'>ERROR</font> occurred when creating database '" . DATABASE_NAME . "' - " . $query->errorCode() . "<br>";
+  echo "<font color='red'>ERROR</font> occurred when creating database '" . DATABASE_NAME . "' - " . $query->errorCode() . " (maybe MySQL user doesn't have sufficent permissions?)<br>";
 }
 
 $query = $setup->prepare("CREATE TABLE " . DATABASE_NAME . ".users (
@@ -35,7 +35,7 @@ $query = $setup->prepare("CREATE TABLE " . DATABASE_NAME . ".users (
 )");
 
 if ($query->execute()){
-echo "Created table 'users' in database '" . DATABASE_NAME . "' <font color='green'>successfully</font><br>";
+  echo "Created table 'users' in database '" . DATABASE_NAME . "' <font color='green'>successfully</font><br>";
 } else {
   echo "<font color='red'>ERROR</font> occurred when creating table 'users' - " . $query->errorCode() . "<br>";
 }
@@ -48,10 +48,11 @@ $query = $setup->prepare("CREATE TABLE " . DATABASE_NAME . ".log (
 )");
 
 if ($query->execute()){
-echo "Created table 'log' in database '" . DATABASE_NAME . "' <font color='green'>successfully</font><br>";
+  echo "Created table 'log' in database '" . DATABASE_NAME . "' <font color='green'>successfully</font><br>";
 } else {
   echo "<font color='red'>ERROR</font> occurred when creating table 'log' - " . $query->errorCode() . "<br>";
 }
+
 echo "Completed operations. <br>";
 
 echo '</pre>';
